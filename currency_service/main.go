@@ -10,9 +10,9 @@ import (
 var appVersion string
 
 func main(){
-	fmt.Printf("Currency-Service version %s",appVersion)
-	fmt.Printf(currencies.About())
-	fmt.Printf(users.About())
-	fmt.Printf(api.About())
+	fmt.Printf("\nCurrency-Service version %s\n",appVersion)
+	fmt.Println(currencies.About())
+	fmt.Println(users.About())
+	fmt.Println(api.About())
 	api.Init()
 }
