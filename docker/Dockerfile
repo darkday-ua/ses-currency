@@ -15,7 +15,7 @@ FROM alpine:3.9
 
 COPY --from=builder /build/docker/app/files /
 COPY --from=builder /build/artifacts /app/
-
+ENV APP_PORT 8080
 WORKDIR /app
 
 RUN apk --no-cache add tzdata bash \

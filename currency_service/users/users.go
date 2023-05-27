@@ -6,6 +6,7 @@ import
 
 var	packageVersion string = "0.0.1"
 
-func About() string {return fmt.Sprint("..users package version ", packageVersion)}
 
-func init() {}
+func init() {
+	fmt.Println("..users package version ", packageVersion)
+}

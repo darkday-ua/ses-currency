@@ -5,17 +5,20 @@ import(
 	"net/http"
 	"fmt"
 	"currency_service/currencies"
+	"currency_service/config"
 )
 
 var	packageVersion string = "0.0.1"
 
-func About() string {return fmt.Sprint("..api package version ", packageVersion)}
 
 func Init() {
+	fmt.Println("..api package version ", packageVersion)
+	// For the sake of simplicity we build router in explicit way
+	// later we could use dynamic configuration if it is possible in Go, though)
 	http.HandleFunc("/api/rate", getRateHandler)
 	http.HandleFunc("/api/subscribe", subscribeHandler)
 	http.HandleFunc("/api/sendEmails", sendEmailsHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s",config.Config.APP_PORT), nil))
 }
 
 func getRateHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,21 +27,24 @@ func getRateHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	
+	// Here we can obtain the currency pair(s) from the request but for now lets follow the task
+	// If we not require HFT we could use a cache for rates
 	pair:= currencies.CurrencyPair{Currencies: [2]string{"BTC","UAH"}}
 	rate,err:=pair.FetchRate()
+	// actually we should return HTTP 503 Service Unavailable
+	// But according to the task's definition we should return HTTP 400 Bad Request
 	if err!=nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
 	response := struct {
 		Rate float64 `json:"rate"`
 	}{
-		Rate: ,
+		Rate: rate,
 	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -58,5 +64,4 @@ func sendEmailsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-
 }
