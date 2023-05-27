@@ -26,13 +26,18 @@ func getRateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	pair:= currencies.CurrencyPair{Currencies: [2]string{"BTC","UAH"}}
+	rate,err:=pair.FetchRate()
+	if err!=nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
 	response := struct {
 		Rate float64 `json:"rate"`
 	}{
-		Rate: pair.FetchRate(),
+		Rate: ,
 	}
 	json.NewEncoder(w).Encode(response)
 }

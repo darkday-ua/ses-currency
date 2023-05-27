@@ -13,9 +13,10 @@ type CurrencyPair struct {
 }
 
 
-func (pair CurrencyPair) FetchRate() float64 {
+
+func (pair CurrencyPair) FetchRate() (float64, error) {
 	fmt.Println("Fetching rate for ",pair.Currencies[0],"/",pair.Currencies[1])
-	return 1.0/2.0 // Example rate value
+	return 1.0/2.0,nil // Example rate value
 }
 
 func init() {}
