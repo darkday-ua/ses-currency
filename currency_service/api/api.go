@@ -4,9 +4,9 @@ import(
 	"log"
 	"net/http"
 	"fmt"
-	"currency_service/currencies"
-	"currency_service/config"
-	"currency_service/users"
+	"github.com/darkday-ua/ses-currency/currency_service/currencies"
+	"github.com/darkday-ua/ses-currency/currency_service/config"
+	"github.com/darkday-ua/ses-currency/currency_service/users"
 )
 
 var	packageVersion string = "0.0.1"

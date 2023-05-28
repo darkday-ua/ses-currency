@@ -3,8 +3,8 @@ package config
 import(
 	"fmt"
 	"context"
-	"github.com/sethvargo/go-envconfig"
-	"github.com/joho/godotenv"
+	"github.com/darkday-ua/ses-currency/github.com/sethvargo/go-envconfig"
+	"github.com/darkday-ua/ses-currency/github.com/joho/godotenv"
 
 )
 
