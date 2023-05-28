@@ -54,7 +54,19 @@ func subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	email:="test@me.email"
+	// content_type:=r.Header.Get("Content-type")
+	// #ATTENTION Should we also check for the url-form-encoded content type?
+
+	if err := r.ParseMultipartForm(1024); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	
+	email:=r.MultipartForm.Value["email"][0]
+	if !users.ValidateEmail(email) {		
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	msg,added:=users.AddUser(email)
 	if !added {
 		log.Printf("Error adding subscription for %s, %s \n",email,msg)

@@ -20,6 +20,10 @@ func AddUser(email string) (string,bool) {
 	
 	return "",true
 }
+// mock validation
+func ValidateEmail(email string) bool {
+	return email!="" && len(email)>3 && len(email)<30
+}
 
 func init() {
 	fmt.Println("..users package version ", packageVersion)
