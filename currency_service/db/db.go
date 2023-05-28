@@ -100,6 +100,20 @@ func (db *DB) AddUser(user string) (string, bool) {
 	return "user_added",true
 }
 
+func (db *DB)GetSubscribedUsers() []string {
+	db.cacheLock.RLock()
+	users := make([]string, len(db.cache))
+
+	i := 0
+	for k := range db.cache {
+		users[i] = k
+		i++
+	}
+	db.cacheLock.RUnlock()	
+
+	return users
+}
+
 
 func init() {	
 	fmt.Println("..db package version ", packageVersion)

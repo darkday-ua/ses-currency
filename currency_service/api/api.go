@@ -86,6 +86,12 @@ func sendEmailsHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-
+	msg,sent:=users.SendRate()
+	if !sent {
+		log.Println("error sending messages ",msg)
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
+
 }

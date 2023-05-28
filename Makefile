@@ -10,14 +10,17 @@ init: ## init packages
 	mkdir -p build &&\
     rm -rf build/* 
 
+run: init ## runs locally
+	cd currency_service && go run main.go
+
 build: init ## build binary file
 	GOOS=${GOOS} CGO_ENABLED=${CGO_ENABLED} GOARCH=${GOARCH} \
-	go build -ldflags "-X 'main.appVersion=$(TAG)-$$(date -u +%Y%m%d%H%M)'" -o "$(GO_DIR)/build/bin/currencies" cmd/currency_service/main.go
+	go build -ldflags "-X 'main.appVersion=$(TAG)-$$(date -u +%Y%m%d%H%M)'" -o "$(GO_DIR)/build/bin/currencies" currency_service/main.go
 
 docker-image: ## build docker image
 	REMOVE_CONTAINERS=${REMOVE_CONTAINERS} DOCKER_IMAGE=${DOCKER_IMAGE} ./scripts/remove_docker_containers.sh
 	docker rmi ${DOCKER_IMAGE}:${TAG} -f || true ;\
-	docker build -f "${GO_DIR}/docker/app/Dockerfile" -t ${DOCKER_IMAGE}:${TAG} ${GO_DIR}
+	docker build -f "${GO_DIR}/docker/Dockerfile" -t ${DOCKER_IMAGE}:${TAG} ${GO_DIR}
 
 test: ## test application with race
 	go test -v ./...

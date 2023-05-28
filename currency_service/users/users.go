@@ -4,8 +4,10 @@ import
 	"fmt"
 	"log"
 	"currency_service/db"
+	"currency_service/config"
 	"net/smtp"
-	"currency_service/currency"
+	"currency_service/currencies"
+	"strconv"
 )
 
 var	packageVersion string = "0.0.1"
@@ -28,10 +30,10 @@ func ValidateEmail(email string) bool {
 
 func SendRate() (string,bool) {
 	dbSession:= sessionManager.GetDBSession()		
-	users,err:= dbSession.GetSubscribedUsers()
-	if err!=nil{
-		return "not able to get subscribers",false
-	}
+	users:= dbSession.GetSubscribedUsers()
+	//count:=len(users)
+
+	// for real app we should use here multiprocessing or queue
 	smtp_from:=config.Config.SMTP_FROM
 	smtp_password:=config.Config.SMTP_PASSWORD
 	smtp_user:=config.Config.SMTP_USER
@@ -41,9 +43,15 @@ func SendRate() (string,bool) {
 		return "not able to send email, check smtp settings",false
 	}
 	auth := smtp.PlainAuth("", smtp_user, smtp_password, smtp_host)
+	pair:= currencies.CurrencyPair{Currencies: [2]string{"BTC","UAH"}}
+	rate,err:=pair.FetchRate()
+	if err!=nil{
+		rate=0
+	}
 	for _,user:=range users {
-		err := smtp.SendMail(smtp_host+":"+smtp_port, auth, smtp_from, []string{user}, []byte("To: "+user+"\r\nSubject: Currency rate\r\n\r\n"+currency.GetRate()))
-	return "",true
+		smtp.SendMail(smtp_host+":"+smtp_port, auth, smtp_from, []string{user}, []byte("To: "+user+"\r\nSubject: Currency rate:\t%s\n"+strconv.FormatFloat(rate, 'E', -1, 32)))
+	}
+		return "",true
 }
 
 

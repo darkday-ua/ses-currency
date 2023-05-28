@@ -2,7 +2,6 @@ package config
 
 import(
 	"fmt"
-//	"os"
 	"context"
 	"github.com/sethvargo/go-envconfig"
 	"github.com/joho/godotenv"

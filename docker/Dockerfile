@@ -13,8 +13,8 @@ RUN GOOS=linux GOARCH=amd64 make build
 
 FROM alpine:3.9
 
-COPY --from=builder /build/docker/app/files /
-COPY --from=builder /build/artifacts /app/
+COPY --from=builder /docker/entrypoint.sh /
+COPY --from=builder /build/ /app/
 ENV APP_PORT 8080
 WORKDIR /app
 
@@ -24,4 +24,4 @@ RUN apk --no-cache add tzdata bash \
     && rm -rf /tmp/* \
     && rm -rf /var/cache/apk/*
 
-ENTRYPOINT ["/docker/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
