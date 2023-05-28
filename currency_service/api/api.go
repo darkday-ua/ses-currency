@@ -6,6 +6,7 @@ import(
 	"fmt"
 	"currency_service/currencies"
 	"currency_service/config"
+	"currency_service/users"
 )
 
 var	packageVersion string = "0.0.1"
@@ -53,7 +54,18 @@ func subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-
+	email:="test@me.email"
+	msg,added:=users.AddUser(email)
+	if !added {
+		log.Printf("Error adding subscription for %s, %s \n",email,msg)
+		if msg=="user_exists" {
+			w.WriteHeader(http.StatusConflict)		
+		}else
+		{
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 }
 

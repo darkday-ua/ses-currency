@@ -3,6 +3,8 @@
 - Why should we return 400 on GET/rate request? This is not a client error, because we don't pass any data. 
   It would be better return 503 in case of impossibility to get rate from external service.
 
+- Also do not described error codes for the POST requests
+
 - In case of really big user's database it would be better have separated requests for sending email and for obtaining results
 
   **Approaches:**

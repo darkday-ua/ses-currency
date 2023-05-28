@@ -1,26 +1,107 @@
 package db
 
-import(
-	"fmt"
+import (
+	"bufio"
 	"os"
+	"sync"
 	"log"
+	"fmt"
 	"currency_service/config"
-
 )
 
 var	packageVersion string = "0.0.1"
 
-var db_in_memory bool = false
+type DB struct {
+	file         *os.File
+	buffer       []string
+	cache        map[string]bool
+	cacheLock    sync.RWMutex
+	filePath     string
+	inMemoryOnly bool
+}
 
-func init() {
-	fmt.Println("..db package version ", packageVersion)
-	file, err:= os.OpenFile(config.Config.DB_PATH,os.O_CREATE, 0666)
-    if err != nil {
-        fmt.Printf("Unable to create/open db file at  %s, in-memory db will be used\n",config.Config.DB_PATH)
-		db_in_memory = true
-    } else {
-		fmt.Println("Database file created at ",config.Config.DB_PATH)
+type SessionManager struct {
+	db *DB
+}
+
+var sessionManager *SessionManager
+var once sync.Once
+
+func GetSessionManager() (*SessionManager, error) {
+	once.Do(func() {
+		db := &DB{
+			filePath: config.Config.DB_PATH,
+			cache:    make(map[string]bool),
+		}
+
+		// It would be better to have real database or even have memcache
+		// because seeking in the file is quite expensive
+		// So we emulate here serious things with write-through memcaching and db sessions :)
+
+		err := db.fillMemoryCacheFromFile()
+		if err != nil {
+			log.Println("Can not populate memcache from the db file ", err)
+			
+		}else{
+			fmt.Println("Populated memcache from the db file, ", db.cache)
+		}
+
+		sessionManager = &SessionManager{db: db}
+	})
+
+	return sessionManager, nil
+}
+
+func (sm *SessionManager) GetDBSession() *DB {
+	return sm.db
+}
+
+func (db *DB) fillMemoryCacheFromFile() error {
+	if db.filePath == "" {
+		return nil
 	}
-    file.Close()
+
+	file, err := os.Open(db.filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		db.cache[line] = true
+	}
+
+	return scanner.Err()
+}
+
+// #ATTENTION Should be better have these operation in separated CRUD module
+func (db *DB) AddUser(user string) (string, bool) {
+	db.cacheLock.RLock()
+	_, exists := db.cache[user]
+	db.cacheLock.RUnlock()
+
+	if exists {
+		return "user_exists", false
+	}
+
+	if db.filePath != "" {
+		if file, err := os.OpenFile(db.filePath, os.O_APPEND|os.O_WRONLY, os.ModeAppend); err == nil{	
+			file.WriteString(user + "\n"); 
+			file.Close()
+		}
+	}
+
+	db.cacheLock.Lock()
+	db.cache[user] = true
+	db.cacheLock.Unlock()
+
+	return "user_added",true
+}
+
+
+func init() {	
+	fmt.Println("..db package version ", packageVersion)
 }
 
