@@ -14,8 +14,9 @@ run: init ## runs locally
 	cd currency_service && go run main.go
 
 build: init ## build binary file
+	cd currency_service && \
 	GOOS=${GOOS} CGO_ENABLED=${CGO_ENABLED} GOARCH=${GOARCH} \
-	go build -ldflags "-X 'main.appVersion=$(TAG)-$$(date -u +%Y%m%d%H%M)'" -o "$(GO_DIR)/build/bin/currencies" currency_service/main.go
+	go build -ldflags "-X 'main.appVersion=$(TAG)-$$(date -u +%Y%m%d%H%M)'" -o "$(GO_DIR)/build/bin/currencies" main.go
 
 docker-image: ## build docker image
 	REMOVE_CONTAINERS=${REMOVE_CONTAINERS} DOCKER_IMAGE=${DOCKER_IMAGE} ./scripts/remove_docker_containers.sh

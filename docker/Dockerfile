@@ -5,23 +5,17 @@ RUN apk add --update make \
     && rm -rf /var/cache/apk/*
 
 RUN mkdir /build
-WORKDIR /build
+
 
 COPY . .
-
-RUN GOOS=linux GOARCH=amd64 make build
+RUN cd ./currency_service  && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a -o /build/currency_service
 
 FROM alpine:3.9
 
-COPY --from=builder /docker/entrypoint.sh /
-COPY --from=builder /build/ /app/
+COPY --from=builder /build/currency_service /app/currency_service
 ENV APP_PORT 8080
-WORKDIR /app
+EXPOSE ${APP_PORT}
+RUN chmod +x /app/currency_service 
+   
 
-RUN apk --no-cache add tzdata bash \
-    && chmod +x /docker/bin/* \
-    && chmod +x bin \
-    && rm -rf /tmp/* \
-    && rm -rf /var/cache/apk/*
-
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/app/currency_service"]

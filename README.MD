@@ -1,3 +1,10 @@
+## ATTENTION
+ App can be run, build and build into docker image using make  commands.
+ Environment var can be setup in .env file or passed through export. 
+ For full functional (rate gathering, email sending) please set corresponding variables
+ If something does not work I jope the code is self explanatory
+ It took more time than I scheduled so some things are done as a framework or left for later (testing, automaton in makefile)
+
 ## Notes
 
 - Why should we return 400 on GET/rate request? This is not a client error, because we don't pass any data. 

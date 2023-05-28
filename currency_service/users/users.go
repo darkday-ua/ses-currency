@@ -3,10 +3,10 @@ import
 (
 	"fmt"
 	"log"
-	"github.com/darkday-ua/ses-currency/currency_service/db"
-	"github.com/darkday-ua/ses-currency/currency_service/config"
+	"currency_service/db"
+	"currency_service/config"
 	"net/smtp"
-	"github.com/darkday-ua/ses-currency/currency_service/currencies"
+	"currency_service/currencies"
 	"strconv"
 )
 

@@ -6,7 +6,7 @@ import (
 	"sync"
 	"log"
 	"fmt"
-	"github.com/darkday-ua/ses-currency/currency_service/config"
+	"currency_service/config"
 )
 
 var	packageVersion string = "0.0.1"

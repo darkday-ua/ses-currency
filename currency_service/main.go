@@ -2,7 +2,7 @@
 package main
 import (
 	"fmt"
-	"github.com/darkday-ua/ses-currency/currency_service/api"
+	"currency_service/api"
 )
 
 var appVersion string
