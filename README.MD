@@ -1,9 +1,13 @@
 ## ATTENTION
  App can be run, build and build into docker image using make  commands.
- Environment var can be setup in .env file or passed through export. 
+ 
+ Environment vars can be setup in .env file or passed through export. 
+ 
  For full functional (rate gathering, email sending) please set corresponding variables
- If something does not work I jope the code is self explanatory
- It took more time than I scheduled so some things are done as a framework or left for later (testing, automaton in makefile)
+ 
+ If something does not work I hope the code is self explanatory
+ 
+ It has taken more time than I scheduled so some things are done as a framework or left for later (testing, automation in makefile)
 
 ## Notes
 
