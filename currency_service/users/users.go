@@ -7,10 +7,9 @@ import
 	"currency_service/config"
 	"net/smtp"
 	"currency_service/currencies"
-	"strconv"
 )
 
-var	packageVersion string = "0.0.1"
+var	packageVersion string = "0.0.2"
 var sessionManager *db.SessionManager
 
 
@@ -44,12 +43,17 @@ func SendRate() (string,bool) {
 	}
 	auth := smtp.PlainAuth("", smtp_user, smtp_password, smtp_host)
 	pair:= currencies.CurrencyPair{Currencies: [2]string{"BTC","UAH"}}
-	rate,err:=pair.FetchRate()
-	if err!=nil{
-		rate=0
-	}
+	rate,_:=pair.FetchRate()
+
 	for _,user:=range users {
-		smtp.SendMail(smtp_host+":"+smtp_port, auth, smtp_from, []string{user}, []byte("To: "+user+"\r\nSubject: Currency rate:\t%s\n"+strconv.FormatFloat(rate, 'E', -1, 32)))
+		log.Println("sending email to ",user)
+		body:=fmt.Sprintf("To: "+user+"\r\nSubject: Currency rate\n%s / %s: %f\n",pair.Currencies[0],pair.Currencies[1],rate)
+		log.Println(body)
+		err := smtp.SendMail(smtp_host+":"+smtp_port, auth, smtp_from, []string{user}, []byte(body))
+		if err!=nil{
+			log.Println("Error sending email to ",user)
+			log.Println(err)
+		}
 	}
 		return "",true
 }

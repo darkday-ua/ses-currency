@@ -1,16 +1,16 @@
 package currencies
-import
-(
-	"fmt"
-	"net/http"
-	"encoding/json"
-	"log"
+
+import (
 	"bytes"
 	"currency_service/config"
-	//"strconv"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"time"
 )
 
-var	packageVersion string = "0.0.1"
+var	packageVersion string = "0.0.2"
 
 
 type CurrencyPair struct {
@@ -27,17 +27,29 @@ func (pair CurrencyPair) FetchRate() (float64, error) {
         log.Fatal(err)
     }
 	// Hardcoded until future of the task will be clear
-	client := &http.Client{}
+	client := &http.Client{Timeout: 3*time.Second}
     r, _ := http.NewRequest("POST", "https://api.livecoinwatch.com/coins/single", bytes.NewBuffer(request_json)) // URL-encoded payload
     r.Header.Set("x-api-key", config.Config.LIVE_COIN_WATCH_API_KEY)
     r.Header.Set("content-type", "application/json")
     resp, err := client.Do(r)
+
 	if err != nil {
-        log.Fatal(err)
+        log.Println(err)
+		if config.Config.EMULATE_RATE=="yes"{
+			return 123456.7,nil
+		}else{
+			return 0.0,fmt.Errorf("can't fetch rate")
+		}
     }
 	defer resp.Body.Close()
 	if resp.StatusCode!=200 {
-		return 0.0,fmt.Errorf("can't fetch rate")
+		log.Println(err,resp)
+		if config.Config.EMULATE_RATE=="yes"{
+			return 123456.7,nil
+		}else{
+			return 0.0,fmt.Errorf("can't fetch rate")
+		}
+		
 	}
 	var res map[string]interface{}
 

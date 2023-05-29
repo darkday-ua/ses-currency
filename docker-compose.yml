@@ -1,0 +1,12 @@
+version: '3'
+services:
+  ses:
+    image: ses-school-3-currency:0.0.2  # Replace with the actual image name
+    ports:
+      - 8080:8080
+    volumes:
+      - ses:/var/currency_service/
+    env_file:
+      - ./.env
+volumes:
+  ses:

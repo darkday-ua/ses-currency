@@ -23,6 +23,9 @@ docker-image: ## build docker image
 	docker rmi ${DOCKER_IMAGE}:${TAG} -f || true ;\
 	docker build -f "${GO_DIR}/docker/Dockerfile" -t ${DOCKER_IMAGE}:${TAG} ${GO_DIR}
 
+docker-run: ## runs local docker container
+	docker run -p 8080:8080 --env-file ./.env ${DOCKER_IMAGE}:${TAG}
+
 test: ## test application with race
 	go test -v ./...
 

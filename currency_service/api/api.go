@@ -9,7 +9,7 @@ import(
 	"currency_service/users"
 )
 
-var	packageVersion string = "0.0.1"
+var	packageVersion string = "0.0.2"
 
 
 func Init() {

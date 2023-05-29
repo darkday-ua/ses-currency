@@ -9,7 +9,7 @@ import (
 	"currency_service/config"
 )
 
-var	packageVersion string = "0.0.1"
+var	packageVersion string = "0.0.2"
 
 type DB struct {
 	file         *os.File
@@ -58,10 +58,11 @@ func (sm *SessionManager) GetDBSession() *DB {
 
 func (db *DB) fillMemoryCacheFromFile() error {
 	if db.filePath == "" {
+		log.Println("filePath is not set")
 		return nil
 	}
 
-	file, err := os.Open(db.filePath)
+	file, err := os.OpenFile(db.filePath,os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		return err
 	}

@@ -8,7 +8,7 @@ import(
 
 )
 
-var	packageVersion string = "0.0.1"
+var	packageVersion string = "0.0.2"
 
 
 type AppConfig struct {
@@ -19,17 +19,18 @@ type AppConfig struct {
 	SMTP_USER string `env:"SMTP_USER"`
 	SMTP_PASSWORD string `env:"SMTP_PASSWORD"`
 	SMTP_FROM string `env:"SMTP_FROM"`
-	LIVE_COIN_WATCH_API_KEY string `env:"LIVE_COIN_WATCH_API_KEY"`}
-
+	LIVE_COIN_WATCH_API_KEY string `env:"LIVE_COIN_WATCH_API_KEY"`
+	EMULATE_RATE string `env:"EMULATE_RATE,default=no"`}
 var	Config AppConfig
 
 func init() {
 	// for local dev or can be injected in docker container
-	godotenv.Load(".env")
+	godotenv.Load("../.env")
 	ctx := context.Background()
 
 	envconfig.Process(ctx, &Config)
 	
-	fmt.Printf("..config package version %s\n%+v\n", packageVersion,Config)
+	//fmt.Printf("..config package version %s\n%+v\n", packageVersion,Config)
+	fmt.Printf("..config package version %s\n", packageVersion)
 }
 
